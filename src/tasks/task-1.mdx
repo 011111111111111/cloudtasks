@@ -1,0 +1,33 @@
+---
+title: "Task 1"
+date: "2024-06-10"
+description: "AWS EC2 instance creation using Terraform"
+---
+
+# Task 1
+
+## AWS EC2 Instance Screenshot
+
+![EC2 Instance Running](/ec2.png)
+
+## Terraform Code Screenshot
+
+![EC2 Code Screenshot](/ec2%20cod.png)
+
+## Terraform Code
+
+```hcl
+provider "aws" {
+    region     = "ap-south-1"
+    access_key = "YOUR_ACCESS_KEY"
+    secret_key = "YOUR_SECRET_KEY"
+}
+
+resource "aws_instance" "first-server" {
+    ami           = "ami-0d03cb826412c6b0f"
+    instance_type = "t2.micro"
+    tags = {
+        Name = "amazon_linux"
+    }
+}
+```

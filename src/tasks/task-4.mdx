@@ -1,0 +1,154 @@
+---
+title: "Task 4"
+date: "2024-06-13"
+description: "This is the fourth task."
+---
+
+import Tabs from '../components/Tabs'
+import Tab from '../components/Tab'
+
+<Tabs>
+  <Tab label="S3 website">
+
+  ## A. Launch a Static Website on S3 – “ByteWave Solutions”
+
+  ### Web Server
+  <img src="/webserver.png" alt="Web Server" />
+
+  ### S3 Bucket
+  <img src="/bucket.png" alt="S3 Bucket" />
+
+  ### Terraform Output 1
+  <img src="/t11.png" alt="Terraform Output 1" />
+
+  ### Terraform Output 2
+  <img src="/t12.png" alt="Terraform Output 2" />
+
+  ### Terraform Code Screenshot
+  <img src="/t1code.png" alt="Terraform Code" />
+
+  ### S3 Website Terraform Code (Redacted Keys)
+  ```hcl
+  provider "aws" {
+    region     = "us-east-1"
+    access_key = "********************"
+    secret_key = "****************************************"
+  }
+
+  resource "aws_s3_bucket" "website" {
+    bucket = "bytewave-website-xx"  # replace 'xx' with your initials
+  }
+
+  resource "aws_s3_bucket_public_access_block" "block" {
+    bucket = aws_s3_bucket.website.id
+
+    block_public_acls       = false
+    block_public_policy     = false
+    ignore_public_acls      = false
+    restrict_public_buckets = false
+  }
+
+  resource "aws_s3_bucket_website_configuration" "site" {
+    bucket = aws_s3_bucket.website.id
+
+    index_document {
+      suffix = "index.html"
+    }
+  }
+
+  resource "aws_s3_bucket_policy" "policy" {
+    depends_on = [aws_s3_bucket_public_access_block.block]
+    bucket     = aws_s3_bucket.website.id
+
+    policy = jsonencode({
+      Version = "2012-10-17",
+      Statement = [
+        {
+          Sid       = "PublicReadGetObject",
+          Effect    = "Allow",
+          Principal = "*",
+          Action    = "s3:GetObject",
+          Resource  = "${aws_s3_bucket.website.arn}/*"
+        }
+      ]
+    })
+  }
+
+  resource "aws_s3_object" "index" {
+    bucket       = aws_s3_bucket.website.id
+    key          = "index.html"
+    source       = "${path.module}/index.html"
+    content_type = "text/html"
+    # Removed: acl = "public-read"
+  }
+  ```
+
+  </Tab>
+  <Tab label="EC2 dev server">
+
+  ## B. Deploy EC2 Dev Server with Python – “CloudNova Inc.”
+
+  ### Security Group Screenshot
+  <img src="/task42%20security.png" alt="Security Group" />
+
+  ### SSH Screenshot
+  <img src="/task42%20ssh.png" alt="SSH" />
+
+  ### Terraform Code Screenshot
+  <img src="/task42%20code.png" alt="Terraform Code" />
+
+  ### EC2 Dev Server Terraform Code (Redacted Keys)
+  ```hcl
+  provider "aws" {
+    region     = "eu-west-1"
+    access_key = "********************"
+    secret_key = "****************************************"
+  }
+  data "aws_ami" "amazon_linux" {
+    most_recent = true
+    owners      = ["amazon"]
+
+    filter {
+      name   = "name"
+      values = ["amzn2-ami-hvm-*-x86_64-gp2"]
+    }
+  }
+
+  resource "aws_security_group" "ssh_access" {
+    name        = "allow_ssh"
+    description = "Allow SSH inbound traffic"
+    ingress {
+      from_port   = 22
+      to_port     = 22
+      protocol    = "tcp"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+
+    egress {
+      from_port   = 0
+      to_port     = 0
+      protocol    = "-1"
+      cidr_blocks = ["0.0.0.0/0"]
+    }
+  }
+
+  resource "aws_instance" "dev_server" {
+    ami                    = data.aws_ami.amazon_linux.id
+    instance_type          = "t2.micro"
+    vpc_security_group_ids = [aws_security_group.ssh_access.id]
+    key_name               = "cloudkey"  # Update with your existing AWS key pair
+
+    user_data = <<-EOF
+                #!/bin/bash
+                yum update -y
+                yum install -y python3 git
+                EOF
+
+    tags = {
+      Name = "cloudnova-dev-server"
+    }
+  }
+  ```
+
+  </Tab>
+</Tabs>
