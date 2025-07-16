@@ -7,7 +7,7 @@ export default function Tabs({ children }: { children: React.ReactNode }) {
 
   return (
     <div>
-      <div style={{ display: "flex", gap: 8, marginBottom: 16 }}>
+      <div style={{ display: "flex", gap: 8, marginBottom: 16, overflowX: "auto", whiteSpace: "nowrap" }}>
         {tabs.map((tab, idx) => (
           <button
             key={tab.props.label}
