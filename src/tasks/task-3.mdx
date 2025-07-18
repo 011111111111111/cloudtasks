@@ -381,6 +381,38 @@ import Tab from '../components/Tab'
   </Tab>
   <Tab label="CDK">
     <h3>CDK</h3>
-    {/* Add content or image for CDK here */}
+        ```
+    import { Construct } from "constructs";
+import { App, TerraformStack } from "cdktf";
+import { AwsProvider } from "@cdktf/provider-aws/lib/provider";
+import { S3Bucket } from "@cdktf/provider-aws/lib/s3-bucket";
+
+class MyS3Stack extends TerraformStack {
+  constructor(scope: Construct, id: string) {
+    super(scope, id);
+
+    new AwsProvider(this, "AWS", {
+      region: "eu-west-1",
+    });
+
+    new S3Bucket(this, "MyBucket", {
+      bucket: "cdktf-demo-s3-bucket-unique-1234", // ✅ Must be globally unique!
+    });
+  }
+}
+
+const app = new App();
+new MyS3Stack(app, "s3-stack");
+app.synth();
+
+    ```
+    ![image](/S3CDK.png)
+    # s3 bucket created with cdk
+    ![image](/Cdk1.png)
+    # Deployment of CDK
+    ![image](/Cdk2.png)
+    ![image](/cdkcode.png)
+    # Code of CDK
+ 
   </Tab>
 </Tabs> 
