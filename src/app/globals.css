@@ -94,3 +94,22 @@ a {
   padding: 0.2em 0.4em;
   font-size: 1em;
 }
+
+/* Custom scrollbar for task-3 page */
+.prose::-webkit-scrollbar {
+  width: 12px;
+  background: #232336;
+}
+.prose::-webkit-scrollbar-thumb {
+  background: #ffb86c;
+  border-radius: 6px;
+}
+.prose::-webkit-scrollbar-thumb:hover {
+  background: #ff9800;
+}
+
+/* For Firefox */
+.prose {
+  scrollbar-width: thin;
+  scrollbar-color: #ffb86c #232336;
+}
