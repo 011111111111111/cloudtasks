@@ -348,7 +348,32 @@ import Tab from '../components/Tab'
   </Tab>
   <Tab label="CloudFormation">
     <h3>CloudFormation</h3>
-    {/* Add content or image for CloudFormation here */}
+    ```hcl
+    provider "aws" {
+      region     = "eu-west-1"
+    }
+    # Pass KeyPair name as a variable
+    variable "cloudkey" {
+      description = "EC2 Key Pair name"
+      type        = string
+    }
+
+    resource "aws_cloudformation_stack" "ec2_stack" {
+      name          = "ec2-cfn-stack"
+      template_body = file("${path.module}/template.yaml")
+
+      parameters = {
+        KeyName      = var.cloudkey
+        InstanceType = "t2.micro"
+      }
+
+      capabilities = ["CAPABILITY_NAMED_IAM"]
+    }
+    ```
+    <img src="/cloudformationstack.png" alt="CloudFormation Stack" />
+    <img src="/cloudformationinstance.png" alt="CloudFormation Instance" />
+    <img src="/cloudformationcode.png" alt="CloudFormation Code" />
+    <img src="/templatecode.png" alt="Template Code" />
   </Tab>
   <Tab label="CDK">
     <h3>CDK</h3>
